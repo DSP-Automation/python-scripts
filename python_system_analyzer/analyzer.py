@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 import psutil as psu
-
+import threading
 
 
 class analyzerApp(tk.Tk):
@@ -19,18 +19,14 @@ class analyzerApp(tk.Tk):
         self.cpu_load = 0
         self.progress['value'] = 0
         self.progress['maximum'] = 100
-        while(1):
-            self.start()
-
-    def start(self):
-        self.read_bytes()
-
-    def read_bytes(self):
-        '''get cpu load'''
-        self.cpu_load = psu.cpu_percent(interval=1);
-        self.progress['value'] = self.cpu_load
-        self.cpu_label_value['text'] = self.cpu_load
-
 
 app = analyzerApp()
+def readCPU():
+    threading.Timer(0.50,readCPU).start()
+    app.cpu_load = psu.cpu_percent()
+    app.progress['value'] = app.cpu_load
+    app.cpu_label_value['text'] = app.cpu_load
+    app.update()
+
+readCPU()
 app.mainloop()
